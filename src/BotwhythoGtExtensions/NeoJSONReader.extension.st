@@ -13,7 +13,7 @@ NeoJSONReader >> normalizeIntoCollection: aJSONPath [
 NeoJSONReader >> onlyJSONPath: aJSONPath [
 	| path dictionary valueBlockClosure |
 	path := self normalizeIntoCollection: aJSONPath.
-	dictionary := Dictionary new.
+	dictionary := self mapClass new.
 	path size = 1
 		ifTrue: [ valueBlockClosure := [ self parseValue ] ]
 		ifFalse: [ valueBlockClosure := [ self onlyJSONPath: path allButFirst ] ].
@@ -29,7 +29,7 @@ NeoJSONReader >> onlyJSONPath: aJSONPath [
 NeoJSONReader >> onlyJSONPath: aJSONPath as: aSchema [
 	| path dictionary valueBlockClosure |
 	path := self normalizeIntoCollection: aJSONPath.
-	dictionary := Dictionary new.
+	dictionary := self mapClass new.
 	path size = 1
 		ifTrue: [ valueBlockClosure := [ self nextAs: aSchema ] ]
 		ifFalse: [ valueBlockClosure := [ self onlyJSONPath: path allButFirst as: aSchema ] ].
@@ -45,7 +45,7 @@ NeoJSONReader >> onlyJSONPath: aJSONPath as: aSchema [
 NeoJSONReader >> onlyJSONPathLeafValue: aJSONPath [
 	| counter dictionary path |
 	path := self normalizeIntoCollection: aJSONPath.
-	dictionary := Dictionary new.
+	dictionary := self mapClass new.
 	self
 		parseMapKeysDo: [ :key | 
 			key = path first
@@ -61,7 +61,7 @@ NeoJSONReader >> onlyJSONPathLeafValue: aJSONPath [
 		ifTrue: [ ^ {dictionary.
 				(counter ifNil: [ 0 ]) + 1} ]
 		ifFalse: [ counter timesRepeat: [ dictionary := dictionary flatten ].
-			^ (dictionary isKindOf: Dictionary)
+			^ (dictionary isKindOf: self mapClass)
 				ifTrue: [ dictionary associations first value ]
 				ifFalse: [ dictionary first ] ]
 ]
@@ -70,7 +70,7 @@ NeoJSONReader >> onlyJSONPathLeafValue: aJSONPath [
 NeoJSONReader >> onlyJSONPathLeafValue: aJSONPath as: aSchema [
 	| counter dictionary path |
 	path := self normalizeIntoCollection: aJSONPath.
-	dictionary := Dictionary new.
+	dictionary := self mapClass new.
 	self
 		parseMapKeysDo: [ :key | 
 			key = path first
@@ -86,7 +86,7 @@ NeoJSONReader >> onlyJSONPathLeafValue: aJSONPath as: aSchema [
 		ifTrue: [ ^ {dictionary.
 				(counter ifNil: [ 0 ]) + 1} ]
 		ifFalse: [ counter timesRepeat: [ dictionary := dictionary flatten ].
-			^ (dictionary isKindOf: Dictionary)
+			^ (dictionary isKindOf: self mapClass)
 				ifTrue: [ dictionary associations first value ]
 				ifFalse: [ dictionary first ] ]
 ]
