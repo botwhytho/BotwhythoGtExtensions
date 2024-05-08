@@ -92,6 +92,17 @@ NeoJSONReader >> onlyJSONPathLeafValue: aJSONPath as: aSchema [
 ]
 
 { #category : #'*BotwhythoGtExtensions' }
+NeoJSONReader >> onlyParseAtPosition: anIndex [
+	| wantedValues |
+	self
+		parseListDo: [ :index | 
+			index = anIndex
+				ifTrue: [ wantedValues := self parseValue ]
+				ifFalse: [ self parseValue ] ].
+	^ wantedValues
+]
+
+{ #category : #'*BotwhythoGtExtensions' }
 NeoJSONReader >> onlyParseProperty: aPropertyName [
 	| wantedValues |
 	self
@@ -111,4 +122,22 @@ NeoJSONReader >> onlyParseProperty: aPropertyName as: aSchema [
 				ifTrue: [ wantedValues := self nextAs: aSchema ]
 				ifFalse: [ self parseValue ] ].
 	^ wantedValues
+]
+
+{ #category : #'*BotwhythoGtExtensions' }
+NeoJSONReader >> parseListDo: block [
+	| listIndex |
+	listIndex := 1.
+	self expectChar: $[.
+	(self matchChar: $]) 
+		ifTrue: [ ^ self ].
+	[ readStream atEnd ] 
+		whileFalse: [
+			block cull: listIndex.
+			(self matchChar: $]) 
+				ifTrue: [ ^ self ].
+			(self matchChar: $,)
+				ifFalse: [ self error: ', or ] expected' ].
+				listIndex := listIndex + 1 ].
+	self error: 'incomplete list'
 ]
