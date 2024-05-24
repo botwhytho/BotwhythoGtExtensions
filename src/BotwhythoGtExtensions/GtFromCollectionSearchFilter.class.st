@@ -34,7 +34,7 @@ GtFromCollectionSearchFilter >> matches: anObject [
 
 { #category : #accessing }
 GtFromCollectionSearchFilter >> resultType [
-	(self collection first isKindOf: CompiledCode)
+	(self collection contents first isKindOf: CompiledCode)
 		ifTrue: [ ^ GtAsyncSearchMethodGroupStream ].
 	^ (self collection first isKindOf: RPackage)
 		ifTrue: [ ^ GtAsyncSearchPackageGroupStream ]
