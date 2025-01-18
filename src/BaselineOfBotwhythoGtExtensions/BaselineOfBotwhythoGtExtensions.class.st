@@ -32,7 +32,8 @@ BaselineOfBotwhythoGtExtensions >> addShortcutsHelperShortcut [
 	| rootElement shortcut |
 	rootElement := (GtWorld spaceWithId: GtWorld defaultId do: #yourself) root.
 	shortcut := BlShortcutWithAction new
-			name: 'Spawn Keyboard Shortcuts';
+			name: 'Show List of Keyboard Shortcuts';
+			description: 'Show list of keyboard shortcuts in the currently focused element';
 			combination: (BlKeyCombinationBuilder new primary key: BlKeyboardKey slash) build;
 			action: [ :aBlShortcutEvent :aBlShortcutWithAction | 
 				| focused pager shortcuts |
