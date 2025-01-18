@@ -21,6 +21,33 @@ BaselineOfBotwhythoGtExtensions >> addDateInsertShortcut [
 			ast link: link ]
 ]
 
+{ #category : #adding }
+BaselineOfBotwhythoGtExtensions >> addShortcuts [
+self addDateInsertShortcut.
+self addShortcutsHelperShortcut.
+]
+
+{ #category : #adding }
+BaselineOfBotwhythoGtExtensions >> addShortcutsHelperShortcut [
+	| rootElement shortcut |
+	rootElement := (GtWorld spaceWithId: GtWorld defaultId do: #yourself) root.
+	shortcut := BlShortcutWithAction new
+			name: 'Spawn Keyboard Shortcuts';
+			combination: (BlKeyCombinationBuilder new primary key: BlKeyboardKey slash) build;
+			action: [ :aBlShortcutEvent :aBlShortcutWithAction | 
+				| focused pager shortcuts |
+				focused := rootElement deepestFocusedChild ifNil: [ rootElement ].
+				pager := focused
+						withAllParentsDetect: [ :each | each isKindOf: GtPager ]
+						ifFound: #yourself
+						ifNone: [ nil ].
+				shortcuts := focused gtShortcutsFor: GtPhlowEmptyView new.
+				pager
+					ifNil: [ GtInspector openOn: shortcuts from: rootElement ]
+					ifNotNil: [ focused phlow spawnObject: shortcuts ] ].
+	rootElement addShortcut: shortcut
+]
+
 { #category : #baseline }
 BaselineOfBotwhythoGtExtensions >> baseline: spec [
 	<baseline>
@@ -32,5 +59,5 @@ BaselineOfBotwhythoGtExtensions >> baseline: spec [
 
 { #category : #adding }
 BaselineOfBotwhythoGtExtensions >> postLoadActions [
-	self addDateInsertShortcut
+	self addShortcuts
 ]
