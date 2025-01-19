@@ -14,7 +14,9 @@ BaselineOfBotwhythoGtExtensions >> addDateInsertShortcut [
 		ifNotNil: [ | ast link |
 			ast := method ast.
 			link := MetaLink new
-					metaObject: [ thisContext sender receiver initializeDateInsertShortcut ];
+					metaObject: [ thisContext stack
+							detect: [ :each | each receiver isKindOf: LePageToolContentTreeElement ]
+							ifFound: [ :found | found receiver initializeDateInsertShortcut ] ];
 					selector: #value;
 					control: #after;
 					arguments: #().
