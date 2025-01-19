@@ -7,3 +7,10 @@ String >> gtCopyToClipboardFor: anAction [
 		label: 'Copy to Clipboard';
 		action: [ GtClipboard clipboardText: self ]
 ]
+
+{ #category : #'*BotwhythoGtExtensions' }
+String >> writeToFile: aFileReferences [
+	^ aFileReferences asFileReference
+		writeStreamDo: [ :aStream | aStream nextPutAll: self ];
+		yourself
+]
