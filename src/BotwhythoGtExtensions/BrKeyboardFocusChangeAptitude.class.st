@@ -21,6 +21,7 @@ BrKeyboardFocusChangeAptitude >> initializeListeners [
 				key = BlKeyboardKey arrowLeft
 					ifTrue: [ BlFocusFinder new
 							left;
+							flag: #TODO; "Need to add default root as parent with ability to use closure"
 							root: self widget parent parent;
 							referenceElement: self widget;
 							nextFocusDo: #requestFocus ifNone: [  ] ].
@@ -43,17 +44,24 @@ BrKeyboardFocusChangeAptitude >> initializeListeners [
 							referenceElement: self widget;
 							nextFocusDo: #requestFocus ifNone: [  ] ].
 				key isReturn
-					ifTrue: [ self widget loseFocus.
-						self widget anchor
-							ifNotNil: [ :notNil | 
-								self widget
-									fireEvent: (BrDropdownHideWish new
-											anchor: notNil;
-											yourself) ] ] ];
+					ifTrue: [ self widget aptitude actors
+							detect: [ :each | each isKindOf: BrWithExplicitMenuAptitude ]
+							ifFound: [ :dropdown | dropdown show ]
+							ifNone: [ self widget loseFocus.
+								self widget anchor
+									ifNotNil: [ :notNil | 
+										self widget
+											fireEvent: (BrDropdownHideWish new
+													anchor: notNil;
+													yourself) ] ] ] ];
 		when: BlMouseEnterEvent
 			do: [ :anEvent | 
 				anEvent consumed: true.
-				self widget requestFocus ]
+				self widget requestFocus ];
+		when: BlMouseLeaveEvent
+			do: [ :anEvent | 
+				anEvent consumed: true.
+				self widget loseFocus ]
 ]
 
 { #category : #'api - hooks' }
