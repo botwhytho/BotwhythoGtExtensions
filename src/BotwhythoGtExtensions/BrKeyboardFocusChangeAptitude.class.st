@@ -61,7 +61,20 @@ BrKeyboardFocusChangeAptitude >> initializeListeners [
 		when: BlMouseLeaveEvent
 			do: [ :anEvent | 
 				anEvent consumed: true.
-				self widget loseFocus ]
+				self widget loseFocus ];
+		when: BlClickEvent
+			do: [ :anEvent | 
+				anEvent consumed: true.
+				self widget loseFocus.
+				self widget aptitude actors
+					detect: [ :each | each isKindOf: BrWithExplicitMenuAptitude ]
+					ifFound: [ :dropdown | ]
+					ifNone: [ self widget anchor
+							ifNotNil: [ :notNil | 
+								self widget
+									fireEvent: (BrDropdownHideWish new
+											anchor: notNil;
+											yourself) ] ] ]
 ]
 
 { #category : #'api - hooks' }
