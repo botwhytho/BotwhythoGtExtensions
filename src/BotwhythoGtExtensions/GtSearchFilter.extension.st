@@ -17,7 +17,7 @@ GtSearchFilter class >> gtSearchClassesWithNotesFor: aView [
 					thenCollect: [ :aPage | aPage type pageClassName substrings first asClass ].
 			classesWithNotes.
 			BrSimpleList new
-				items: classesWithNotes;
+				items: (classesWithNotes sorted: #name ascending);
 				stencil: [ :aClass | 
 					BrLabel new
 						aptitude: BrGlamorousLabelAptitude;
