@@ -6,21 +6,17 @@ Class {
 
 { #category : #adding }
 BaselineOfBotwhythoGtExtensions >> addDateInsertShortcut [
-	| method |
-	method := [ LePageToolContentTreeElement >> #initialize ]
-			on: KeyNotFound
-			do: [ nil ].
-	method
-		ifNotNil: [ | ast link |
-			ast := method ast.
-			link := MetaLink new
-					metaObject: [ thisContext stack
-							detect: [ :each | each receiver isKindOf: LePageToolContentTreeElement ]
-							ifFound: [ :found | found receiver initializeDateInsertShortcut ] ];
-					selector: #value;
-					control: #after;
-					arguments: #().
-			ast link: link ]
+	| rootElement shortcut |
+	rootElement := (GtWorld spaceWithId: GtWorld defaultId do: #yourself) root.
+	shortcut := BlShortcutWithAction new
+			name: 'Insert Today''s Date';
+			combination: (BlKeyCombinationBuilder new primary key: BlKeyboardKey backslash) build;
+			action: [ :aBlShortcutEvent :aBlShortcutWithAction | 
+				[ aBlShortcutEvent target editor inserter
+					atCursor;
+					string: (Date today yyyymmdd copyReplaceAll: '-' with: '/');
+					insert ] on: MessageNotUnderstood do: [  ] ].
+	rootElement addShortcut: shortcut
 ]
 
 { #category : #adding }
