@@ -5,7 +5,8 @@ Behavior >> gtClassReferencesFor: aView [
 	<gtClassView>
 	<gtView>
 	| classes |
-	classes := self -> (self methods flatCollectAsSet: #gtReferencedClasses).
+	classes := self
+			-> ((self methods flatCollectAsSet: #gtReferencedClasses) sorted: #name ascending).
 	classes value ifEmpty: [ ^ aView empty ].
 	^ aView mondrian
 		title: 'Referenced Classes';
