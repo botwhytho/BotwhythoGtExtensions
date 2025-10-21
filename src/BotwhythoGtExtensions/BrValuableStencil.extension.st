@@ -3,19 +3,30 @@ Extension { #name : #BrValuableStencil }
 { #category : #'*BotwhythoGtExtensions' }
 BrValuableStencil >> gtLiveDrawingsFor: aView [
 	<gtView>
-	| animated animateTask animateTaskBuilder containerElement iconElement iconContainerElement listElement segmentIndex segments |
-	((self valuable sourceNode allChildren select: #isVariable)
-		anySatisfy: [ :aVariable | aVariable variable value = BlSvgPath ])
-		ifFalse: [ ^ aView empty ].
+	| animated animateTask animateTaskBuilder containerElement iconElement iconContainerElement listElement segmentIndex segments getSvgElement |
+	getSvgElement := [ :anElement | 
+		(anElement geometry isKindOf: BlSvgPath)
+			ifTrue: [ anElement ]
+			ifFalse: [ (anElement asElement query
+					// [ :childElement | childElement geometry isKindOf: BlSvgPath ]) result
+					anyOne ] ].
+	(self asElement
+		in: [ :aStencilElement | 
+			(aStencilElement geometry isKindOf: BlSvgPath)
+				or: [ (aStencilElement query
+						// [ :anElement | anElement geometry isKindOf: BlSvgPath ]) result size
+						= 1 ] ]) ifFalse: [ ^ aView empty ].
 	segmentIndex := 1.
 	animated := false.
-	iconElement := self asElement.
+	iconElement := getSvgElement value: self asElement.
 	segments := iconElement geometry instVarNamed: #segments.
 	animateTaskBuilder := [ BlRepeatedTaskAction new
 			delay: 64 milliseconds;
-			action: [ iconContainerElement
+			action: [ | newElement |
+				newElement := getSvgElement value: self asElement.
+				iconContainerElement
 					replaceChild: (iconContainerElement childAt: 1)
-					with: (self asElement
+					with: (newElement
 							geometry: (iconElement geometry copy
 									instVarNamed: #segments
 										put: ((iconElement geometry instVarNamed: #segments) first: segmentIndex);
@@ -24,7 +35,7 @@ BrValuableStencil >> gtLiveDrawingsFor: aView [
 						= (iconElement geometry instVarNamed: #segments) size
 						ifTrue: [ 1 ]
 						ifFalse: [ segmentIndex + 1 ].
-				listElement 
+				listElement
 					scrollToIndex: segmentIndex;
 					selectOne: segmentIndex ] ].
 	listElement := GtPhlowProtoView new list
@@ -37,9 +48,12 @@ BrValuableStencil >> gtLiveDrawingsFor: aView [
 					do: [ :anEvent | 
 						anEvent consumed: true.
 						segmentIndex := anIndex.
+						listElement
+							scrollToIndex: segmentIndex;
+							selectOne: segmentIndex.
 						iconContainerElement
 							replaceChild: (iconContainerElement childAt: 1)
-							with: (self asElement
+							with: ((getSvgElement value: self asElement)
 									geometry: (iconElement geometry copy
 											instVarNamed: #segments
 												put: ((iconElement geometry instVarNamed: #segments) first: segmentIndex);
