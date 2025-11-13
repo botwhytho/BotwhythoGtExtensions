@@ -56,7 +56,7 @@ BaselineOfBotwhythoGtExtensions >> baseline: spec [
 		]
 ]
 
-{ #category : #adding }
+{ #category : #loading }
 BaselineOfBotwhythoGtExtensions >> postLoadActions [
 	self addShortcuts
 ]
